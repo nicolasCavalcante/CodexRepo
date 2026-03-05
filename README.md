@@ -1,4 +1,4 @@
-# Plataforma CRUD Completa (Python + FastAPI + Postgres + dbt + DuckDB + Dagster + Streamlit)
+# Plataforma CRUD Completa (Python + FastAPI + dbt + DuckDB + Dagster + Streamlit)
 
 ## Estrutura
 
@@ -6,42 +6,87 @@
 - `app/`: Front-end Streamlit para operar CRUD.
 - `analytics/`: projeto dbt com modelos em DuckDB.
 - `orchestration/`: assets Dagster para executar `dbt run` e `dbt test`.
-- `infra/`: `docker-compose` para subir stack local.
+- `scripts/windows/`: scripts para iniciar API e app sem Docker no Windows.
 
-## Instalação (Python 3.10 + setuptools)
+## Pré-requisitos (Windows)
 
-Pré-requisitos:
+- Windows 10/11
 - Python **3.10**
-- `pip` atualizado
+- PowerShell (recomendado) ou Prompt de Comando
 
-Passos:
+## Instalação (sem Docker)
 
-```bash
-python3.10 -m venv .venv
-source .venv/bin/activate
+No PowerShell, na raiz do projeto:
+
+```powershell
+py -3.10 -m venv .venv
+.\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -e .
 ```
 
-O pacote base já inclui o conector **DuckDB** (`duckdb`) para rodar analytics localmente.
-
 Dependências de desenvolvimento (testes da API):
 
-```bash
+```powershell
 pip install -e .[dev]
 ```
 
-## Como rodar localmente
+## Como rodar localmente no Windows
 
-```bash
-cd infra
-docker compose up --build
+### 1) Subir API FastAPI
+
+Em um terminal:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+.\scripts\windows\start-api.ps1
 ```
 
-Serviços:
-- API: http://localhost:8000/docs
-- Streamlit: http://localhost:8501
-- Postgres: localhost:5432
+Alternativa via CMD:
+
+```bat
+.\.venv\Scripts\activate.bat
+scripts\windows\start-api.bat
+```
+
+API disponível em:
+- http://127.0.0.1:8000/docs
+
+### 2) Subir Streamlit
+
+Em outro terminal:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+.\scripts\windows\start-app.ps1
+```
+
+Alternativa via CMD:
+
+```bat
+.\.venv\Scripts\activate.bat
+scripts\windows\start-app.bat
+```
+
+App disponível em:
+- http://127.0.0.1:8501
+
+## Banco de dados padrão
+
+A aplicação está configurada para usar SQLite por padrão (`crud_app.db` na raiz do projeto), eliminando a necessidade de Postgres e Docker para desenvolvimento local no Windows.
+
+Se quiser mudar o banco, defina a variável de ambiente `DATABASE_URL` antes de iniciar a API.
+
+## Analytics (dbt + DuckDB)
+
+Com o ambiente ativo:
+
+```powershell
+cd analytics
+dbt deps
+dbt run
+dbt test
+```
 
 ## Modelo de dados inicial
 
@@ -56,41 +101,3 @@ Entidades CRUD iniciais:
 - `GET/POST /v1/products`
 - `GET/POST /v1/orders`
 - `GET /health`
-
-## Roadmap técnico por issues
-
-1. **ISSUE-01 — Setup e observabilidade base**
-   - Logging estruturado (JSON).
-   - Healthchecks em todos serviços.
-   - Métricas básicas com Prometheus.
-
-2. **ISSUE-02 — Segurança da API**
-   - JWT + refresh token.
-   - RBAC por perfil (admin, analyst, operator).
-   - Rate limiting nas rotas públicas.
-
-3. **ISSUE-03 — CRUD avançado**
-   - Paginação, busca full-text e ordenação composta.
-   - Soft delete e trilha de auditoria.
-
-4. **ISSUE-04 — dbt analytics robusto**
-   - Modelos `dim_users`, `dim_products`, `fct_orders`.
-   - `sources.yml` com testes de freshness.
-   - Exposures para dashboards.
-
-5. **ISSUE-05 — Dagster produção**
-   - Schedules diários + sensors por evento.
-   - Retry policies e alertas Slack.
-
-6. **ISSUE-06 — Streamlit produto**
-   - Edição e exclusão no front.
-   - Dashboard de receita e ticket médio.
-   - Controle de sessão por usuário.
-
-7. **ISSUE-07 — CI/CD**
-   - Pipeline com lint, testes de API, `dbt test`.
-   - Build e deploy automatizados.
-
-8. **ISSUE-08 — Qualidade de dados**
-   - Great Expectations (opcional) ou validações customizadas.
-   - Contratos de schema entre API e analytics.
