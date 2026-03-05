@@ -9,78 +9,30 @@
 - `infra/`: `docker-compose` (opcional) para quem quiser subir stack via containers.
 - `scripts/windows/`: scripts PowerShell para rodar API e Streamlit localmente no Windows.
 
-## Configuração de variáveis de ambiente
+## Instalação (Python 3.10 + setuptools)
 
-Crie um arquivo `.env` na raiz do projeto a partir do modelo:
+Pré-requisitos:
+- Python **3.10**
+- `pip` atualizado
 
-```bash
-cp .env.example .env
-```
-
-> No Windows (PowerShell):
-
-```powershell
-Copy-Item .env.example .env
-```
-
-A API, o Streamlit e a orquestração carregam variáveis diretamente do arquivo `.env`.
-
-## Rodando localmente **sem Docker** (Windows)
-
-### 1) Instale dependências do sistema
-
-- Python 3.10+
-- PostgreSQL 16+ (ou compatível)
-
-### 2) Crie o banco Postgres local
-
-Com o `psql`, execute:
-
-```sql
-CREATE DATABASE crud_app;
-```
-
-Depois, ajuste `POSTGRES_*` e `DATABASE_URL` no `.env` se necessário.
-
-### 3) Suba a API (terminal 1)
-
-```powershell
-.\scripts\windows\run_api.ps1
-```
-
-API disponível em: `http://localhost:8000/docs`
-
-### 4) Suba o Streamlit (terminal 2)
-
-```powershell
-.\scripts\windows\run_streamlit.ps1
-```
-
-Streamlit disponível em: `http://localhost:8501`
-
-## Execução manual (sem scripts)
-
-### API
+Passos:
 
 ```bash
-cd api
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python3.10 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e .
 ```
 
-### Streamlit
+O pacote base já inclui o conector **DuckDB** (`duckdb`) para rodar analytics localmente.
+
+Dependências de desenvolvimento (testes da API):
 
 ```bash
-cd app
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-streamlit run streamlit_app.py --server.port 8501
+pip install -e .[dev]
 ```
 
-## (Opcional) Como rodar com Docker Compose
+## Como rodar localmente
 
 ```bash
 cd infra
