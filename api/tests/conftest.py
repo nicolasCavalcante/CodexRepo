@@ -1,9 +1,15 @@
 from collections.abc import Generator
+from pathlib import Path
+import sys
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
+
+API_DIR = Path(__file__).resolve().parents[1]
+if str(API_DIR) not in sys.path:
+    sys.path.insert(0, str(API_DIR))
 
 from app.db.session import Base, get_db
 from app.main import app
