@@ -6,9 +6,81 @@
 - `app/`: Front-end Streamlit para operar CRUD.
 - `analytics/`: projeto dbt com modelos em DuckDB.
 - `orchestration/`: assets Dagster para executar `dbt run` e `dbt test`.
-- `infra/`: `docker-compose` para subir stack local.
+- `infra/`: `docker-compose` (opcional) para quem quiser subir stack via containers.
+- `scripts/windows/`: scripts PowerShell para rodar API e Streamlit localmente no Windows.
 
-## Como rodar localmente
+## Configuração de variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto a partir do modelo:
+
+```bash
+cp .env.example .env
+```
+
+> No Windows (PowerShell):
+
+```powershell
+Copy-Item .env.example .env
+```
+
+A API, o Streamlit e a orquestração carregam variáveis diretamente do arquivo `.env`.
+
+## Rodando localmente **sem Docker** (Windows)
+
+### 1) Instale dependências do sistema
+
+- Python 3.10+
+- PostgreSQL 16+ (ou compatível)
+
+### 2) Crie o banco Postgres local
+
+Com o `psql`, execute:
+
+```sql
+CREATE DATABASE crud_app;
+```
+
+Depois, ajuste `POSTGRES_*` e `DATABASE_URL` no `.env` se necessário.
+
+### 3) Suba a API (terminal 1)
+
+```powershell
+.\scripts\windows\run_api.ps1
+```
+
+API disponível em: `http://localhost:8000/docs`
+
+### 4) Suba o Streamlit (terminal 2)
+
+```powershell
+.\scripts\windows\run_streamlit.ps1
+```
+
+Streamlit disponível em: `http://localhost:8501`
+
+## Execução manual (sem scripts)
+
+### API
+
+```bash
+cd api
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Streamlit
+
+```bash
+cd app
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run streamlit_app.py --server.port 8501
+```
+
+## (Opcional) Como rodar com Docker Compose
 
 ```bash
 cd infra
