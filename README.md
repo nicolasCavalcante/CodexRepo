@@ -6,7 +6,7 @@
 - `app/`: Front-end Streamlit para operar CRUD.
 - `analytics/`: projeto dbt com modelos em DuckDB.
 - `orchestration/`: assets Dagster para executar `dbt run` e `dbt test`.
-- `scripts/windows/`: scripts alternativos para iniciar API e app no Windows.
+- `scripts/windows/`: scripts para iniciar API e app sem Docker no Windows.
 
 ## Pré-requisitos (Windows)
 
@@ -31,37 +31,51 @@ Dependências de desenvolvimento (testes da API):
 pip install -e .[dev]
 ```
 
-## Como rodar localmente no Windows (1 comando)
+## Como rodar localmente no Windows
 
-Com o ambiente virtual ativo, execute:
+### 1) Subir API FastAPI
 
-```powershell
-crud-start --reload
-```
-
-Esse comando de CLI (registrado no `pyproject.toml`) sobe:
-- API FastAPI em `http://127.0.0.1:8000/docs`
-- Streamlit em `http://127.0.0.1:8501`
-
-Parar tudo: `Ctrl + C` no terminal.
-
-### Opções úteis da CLI
+Em um terminal:
 
 ```powershell
-crud-start --api-port 9000 --app-port 8601
-crud-start --database-url "sqlite:///./meu_banco.db"
-crud-start --help
+.\.venv\Scripts\Activate.ps1
+.\scripts\windows\start-api.ps1
 ```
 
-## Scripts alternativos (opcional)
+Alternativa via CMD:
 
-Se preferir manter dois terminais separados, use os scripts em `scripts/windows/`.
+```bat
+.\.venv\Scripts\activate.bat
+scripts\windows\start-api.bat
+```
+
+API disponível em:
+- http://127.0.0.1:8000/docs
+
+### 2) Subir Streamlit
+
+Em outro terminal:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+.\scripts\windows\start-app.ps1
+```
+
+Alternativa via CMD:
+
+```bat
+.\.venv\Scripts\activate.bat
+scripts\windows\start-app.bat
+```
+
+App disponível em:
+- http://127.0.0.1:8501
 
 ## Banco de dados padrão
 
 A aplicação está configurada para usar SQLite por padrão (`crud_app.db` na raiz do projeto), eliminando a necessidade de Postgres e Docker para desenvolvimento local no Windows.
 
-Se quiser mudar o banco, defina a variável de ambiente `DATABASE_URL` antes de iniciar a API, ou use `crud-start --database-url ...`.
+Se quiser mudar o banco, defina a variável de ambiente `DATABASE_URL` antes de iniciar a API.
 
 ## Analytics (dbt + DuckDB)
 
