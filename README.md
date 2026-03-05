@@ -43,5 +43,7 @@ Streamlit → DuckDB
 ## Status
 Projeto em estruturação inicial, com definição de arquitetura e fluxo de referência para evolução incremental dos componentes.
 
+Revisão de merge desta branch: **sem conflitos pendentes** no `README.md`.
+
 ## Motivação
 Fornecer um blueprint prático para integrar operações de CRUD com analytics, reduzindo fricção entre desenvolvimento de produto e engenharia de dados, e acelerando a geração de valor a partir dos dados.
