@@ -1,4 +1,4 @@
-# Plataforma CRUD Completa (Python + FastAPI + dbt + DuckDB + Dagster + Streamlit)
+# Plataforma CRUD Completa (Python + FastAPI + PostgreSQL + dbt + DuckDB + Dagster + Streamlit)
 
 ## Estrutura
 
@@ -6,7 +6,7 @@
 - `app/`: Front-end Streamlit para operar CRUD.
 - `analytics/`: projeto dbt com modelos em DuckDB.
 - `orchestration/`: assets Dagster para executar `dbt run` e `dbt test`.
-- `scripts/windows/`: scripts para iniciar API e app sem Docker no Windows.
+- `scripts/windows/`: scripts para iniciar API e app no Windows (com PostgreSQL).
 
 ## Pré-requisitos (Windows)
 
@@ -33,7 +33,18 @@ pip install -e .[dev]
 
 ## Como rodar localmente no Windows
 
-### 1) Subir API FastAPI
+### 1) Subir PostgreSQL
+
+A API usa PostgreSQL por padrão. Você pode subir o banco com Docker Compose:
+
+```powershell
+docker compose -f infra/docker-compose.yml up -d postgres
+```
+
+Banco disponível em:
+- `postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app`
+
+### 2) Subir API FastAPI
 
 Em um terminal:
 
@@ -52,7 +63,7 @@ scripts\windows\start-api.bat
 API disponível em:
 - http://127.0.0.1:8000/docs
 
-### 2) Subir Streamlit
+### 3) Subir Streamlit
 
 Em outro terminal:
 
@@ -73,9 +84,12 @@ App disponível em:
 
 ## Banco de dados padrão
 
-A aplicação está configurada para usar SQLite por padrão (`crud_app.db` na raiz do projeto), eliminando a necessidade de Postgres e Docker para desenvolvimento local no Windows.
+A aplicação está configurada para usar PostgreSQL por padrão:
 
-Se quiser mudar o banco, defina a variável de ambiente `DATABASE_URL` antes de iniciar a API.
+- `postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app`
+
+Se quiser usar outro banco PostgreSQL, defina a variável de ambiente `DATABASE_URL` antes de iniciar a API.
+Para testes automatizados da API, você também pode definir `TEST_DATABASE_URL`.
 
 ## Analytics (dbt + DuckDB)
 

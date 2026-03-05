@@ -16,7 +16,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--api-host", default="127.0.0.1")
     parser.add_argument("--api-port", type=int, default=8000)
     parser.add_argument("--app-port", type=int, default=8501)
-    parser.add_argument("--database-url", default="sqlite:///./crud_app.db")
+    parser.add_argument(
+        "--database-url",
+        default="postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app",
+    )
     parser.add_argument("--reload", action="store_true", help="Habilita reload no uvicorn")
     return parser
 
