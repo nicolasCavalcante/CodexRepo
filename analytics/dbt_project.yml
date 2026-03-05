@@ -1,0 +1,10 @@
+name: 'crud_analytics'
+version: '1.0.0'
+profile: 'crud_analytics'
+model-paths: ['models']
+models:
+  crud_analytics:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
