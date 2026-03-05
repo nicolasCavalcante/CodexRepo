@@ -8,6 +8,29 @@
 - `orchestration/`: assets Dagster para executar `dbt run` e `dbt test`.
 - `infra/`: `docker-compose` para subir stack local.
 
+## Instalação (Python 3.10 + setuptools)
+
+Pré-requisitos:
+- Python **3.10**
+- `pip` atualizado
+
+Passos:
+
+```bash
+python3.10 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e .
+```
+
+O pacote base já inclui o conector **DuckDB** (`duckdb`) para rodar analytics localmente.
+
+Dependências de desenvolvimento (testes da API):
+
+```bash
+pip install -e .[dev]
+```
+
 ## Como rodar localmente
 
 ```bash
