@@ -101,3 +101,25 @@ Entidades CRUD iniciais:
 - `GET/POST /v1/products`
 - `GET/POST /v1/orders`
 - `GET /health`
+
+## Documentação para iniciantes (MkDocs)
+
+Foi adicionada uma documentação completa em `docs/`, com navegação via MkDocs.
+
+Rodar localmente:
+
+```bash
+pip install -e .[docs]
+mkdocs serve
+```
+
+Build local:
+
+```bash
+mkdocs build --strict
+```
+
+Deploy automático no GitHub Pages:
+
+- Workflow: `.github/workflows/docs.yml`
+- Trigger: push para `main` (ou execução manual)
