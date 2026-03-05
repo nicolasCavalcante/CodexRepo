@@ -1,0 +1,42 @@
+site_name: Plataforma CRUD Completa
+site_description: Documentação para iniciantes da plataforma FastAPI + Streamlit + dbt + Dagster
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - search.highlight
+
+nav:
+  - Início: index.md
+  - Primeiros passos:
+      - Ambiente e instalação: getting-started.md
+      - Rodando localmente: running-locally.md
+  - Arquitetura:
+      - Visão geral: architecture.md
+      - API (FastAPI): api.md
+      - App (Streamlit): app.md
+      - Analytics (dbt): analytics.md
+      - Orquestração (Dagster): orchestration.md
+  - Qualidade:
+      - Testes: testing.md
+  - Referência:
+      - Configurações e variáveis: configuration.md
+      - Rotas da API: api-routes.md
+  - Contribuição:
+      - Guia de contribuição: contributing.md
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+plugins:
+  - search
