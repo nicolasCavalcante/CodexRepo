@@ -136,4 +136,6 @@ mkdocs build --strict
 Deploy automático no GitHub Pages:
 
 - Workflow: `.github/workflows/docs.yml`
-- Trigger: push para `main` (ou execução manual)
+- Trigger: push para `main`/`master` (ou execução manual)
+- No GitHub, em **Settings > Pages**, selecione **Build and deployment: GitHub Actions**.
+- URL publicada: `https://<seu-usuario>.github.io/<seu-repositorio>/`
