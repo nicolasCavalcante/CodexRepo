@@ -14,7 +14,7 @@
 - Python **3.10**
 - PowerShell (recomendado) ou Prompt de Comando
 
-## Instalação (sem Docker)
+## Instalação local
 
 No PowerShell, na raiz do projeto:
 
@@ -35,13 +35,8 @@ pip install -e .[dev]
 
 ### 1) Subir PostgreSQL
 
-A API usa PostgreSQL por padrão. Você pode subir o banco com Docker Compose:
+A API usa PostgreSQL por padrão. Inicie seu PostgreSQL local com as credenciais abaixo (ou ajuste `DATABASE_URL`):
 
-```powershell
-docker compose -f infra/docker-compose.yml up -d postgres
-```
-
-Banco disponível em:
 - `postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app`
 
 ### 2) Subir API FastAPI

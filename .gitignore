@@ -1,7 +1,41 @@
-__pycache__/
-*.pyc
-.venv/
-.pytest_cache/
-*.db
-data/
+# OS / editor
 .DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Packaging
+*.egg-info/
+build/
+dist/
+pip-wheel-metadata/
+
+# Local databases / data
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+*.duckdb-wal
+data/
+
+# dbt artifacts
+analytics/target/
+analytics/logs/
+analytics/dbt_packages/
