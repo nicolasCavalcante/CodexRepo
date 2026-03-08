@@ -8,6 +8,11 @@ class UserCreate(BaseModel):
     name: str = Field(min_length=2, max_length=255)
 
 
+class UserUpdate(BaseModel):
+    email: EmailStr | None = None
+    name: str | None = Field(default=None, min_length=2, max_length=255)
+
+
 class UserRead(UserCreate):
     id: int
     created_at: datetime
