@@ -5,8 +5,10 @@ import { ref, onMounted } from 'vue'
 const todos = ref([])
 const newTodo = ref('')
 
-// Base URL of the backend API (adjust if running on outra porta/host)
-const apiBase = 'http://localhost:8000/v1/todos'
+// Base URL of the backend API.
+// In development this goes through Vite proxy (/v1 -> http://localhost:8000/v1)
+// to avoid CORS problems when the dev server uses a different port.
+const apiBase = '/v1/todos'
 
 // Load todos from backend when the component mounts
 const fetchTodos = async () => {
