@@ -3,7 +3,15 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.models.entities import Order, Product, User
-from app.schemas.entities import OrderCreate, OrderRead, ProductCreate, ProductRead, UserCreate, UserRead
+from app.schemas.entities import (
+    OrderCreate,
+    OrderRead,
+    ProductCreate,
+    ProductRead,
+    UserCreate,
+    UserRead,
+    UserUpdate,
+)
 from app.services.crud import CRUDService
 
 router = APIRouter(prefix="/v1")
@@ -24,8 +32,8 @@ def create_user(payload: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.patch("/users/{user_id}", response_model=UserRead)
-def update_user(user_id: int, payload: UserCreate, db: Session = Depends(get_db)):
-    user = user_service.update(db, user_id, payload.model_dump())
+def update_user(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)):
+    user = user_service.update(db, user_id, payload.model_dump(exclude_unset=True))
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
