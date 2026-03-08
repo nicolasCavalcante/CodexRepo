@@ -1,17 +1,32 @@
+from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException, Query, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app.database import engine, ensure_database_exists, get_db
 from app.models import Base, Todo
 from app.schemas import TodoCreate, TodoRead, TodoUpdate
 
-app = FastAPI(title="TODO API")
 
-
-@app.on_event("startup")
-def on_startup() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: ensure database exists and create tables
     ensure_database_exists()
     Base.metadata.create_all(bind=engine)
+    yield
+    # Shutdown: add cleanup if needed
+
+
+app = FastAPI(title="TODO API", lifespan=lifespan)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
@@ -41,15 +56,21 @@ def list_todos(
 def get_todo(todo_id: int, db: Session = Depends(get_db)) -> TodoRead:
     todo = db.query(Todo).filter(Todo.id == todo_id).first()
     if todo is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found"
+        )
     return todo
 
 
 @app.put("/v1/todos/{todo_id}", response_model=TodoRead)
-def update_todo(todo_id: int, todo_in: TodoUpdate, db: Session = Depends(get_db)) -> TodoRead:
+def update_todo(
+    todo_id: int, todo_in: TodoUpdate, db: Session = Depends(get_db)
+) -> TodoRead:
     todo = db.query(Todo).filter(Todo.id == todo_id).first()
     if todo is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found"
+        )
 
     for field, value in todo_in.model_dump(exclude_unset=True).items():
         setattr(todo, field, value)
@@ -64,7 +85,9 @@ def update_todo(todo_id: int, todo_in: TodoUpdate, db: Session = Depends(get_db)
 def delete_todo(todo_id: int, db: Session = Depends(get_db)) -> None:
     todo = db.query(Todo).filter(Todo.id == todo_id).first()
     if todo is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found"
+        )
 
     db.delete(todo)
     db.commit()
