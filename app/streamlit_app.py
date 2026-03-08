@@ -1,10 +1,17 @@
-import os
+import sys
+from pathlib import Path
 
 import pandas as pd
 import requests
 import streamlit as st
 
-API_URL = os.getenv("API_URL", "http://localhost:8000/v1")
+API_PACKAGE_DIR = Path(__file__).resolve().parents[1] / "api"
+if str(API_PACKAGE_DIR) not in sys.path:
+    sys.path.insert(0, str(API_PACKAGE_DIR))
+
+from app.core.settings import get_env
+
+API_URL = get_env("API_URL", required=True)
 
 st.set_page_config(page_title="CRUD + Analytics", layout="wide")
 st.title("CRUD + Analytics Platform")

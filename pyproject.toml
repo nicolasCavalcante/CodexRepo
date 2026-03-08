@@ -27,6 +27,7 @@ dependencies = [
 
 [project.scripts]
 crud-start = "app.cli:main"
+crud-db = "app.cli_db:main"
 
 [project.optional-dependencies]
 dev = [

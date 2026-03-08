@@ -7,6 +7,9 @@ import sys
 import time
 from pathlib import Path
 
+from app.core.settings import get_env
+from app.db.admin import DatabaseAdminError, create_schema, ensure_database
+
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -18,9 +21,17 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--app-port", type=int, default=8501)
     parser.add_argument(
         "--database-url",
-        default="postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app",
+        default=None,
+        help="Sobrescreve DATABASE_URL para esta execução.",
     )
-    parser.add_argument("--reload", action="store_true", help="Habilita reload no uvicorn")
+    parser.add_argument(
+        "--bootstrap-db",
+        action="store_true",
+        help="Cria o database (PostgreSQL) e as tabelas antes de iniciar os processos.",
+    )
+    parser.add_argument(
+        "--reload", action="store_true", help="Habilita reload no uvicorn"
+    )
     return parser
 
 
@@ -29,10 +40,23 @@ def main() -> int:
 
     repo_root = Path(__file__).resolve().parents[2]
     streamlit_app = repo_root / "app" / "streamlit_app.py"
+    database_url = args.database_url or get_env("DATABASE_URL", required=True)
 
     env = os.environ.copy()
-    env["DATABASE_URL"] = args.database_url
+    env["DATABASE_URL"] = database_url
     env["API_URL"] = f"http://{args.api_host}:{args.api_port}/v1"
+
+    if args.bootstrap_db:
+        try:
+            created = ensure_database(database_url)
+            create_schema(database_url)
+        except DatabaseAdminError as exc:
+            print(str(exc))
+            return 1
+        if created:
+            print("Database criado e schema inicializado.")
+        else:
+            print("Database existente e schema inicializado.")
 
     uvicorn_cmd = [
         sys.executable,
@@ -70,7 +94,13 @@ def main() -> int:
             api_code = api_proc.poll()
             app_code = app_proc.poll()
             if api_code is not None or app_code is not None:
-                return api_code if api_code is not None else app_code if app_code is not None else 0
+                return (
+                    api_code
+                    if api_code is not None
+                    else app_code
+                    if app_code is not None
+                    else 0
+                )
             time.sleep(0.5)
     except KeyboardInterrupt:
         pass

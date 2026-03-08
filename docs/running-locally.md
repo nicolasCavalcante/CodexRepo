@@ -28,6 +28,28 @@ crud-start --reload
 
 Esse comando sobe API e Streamlit juntos.
 
+Para inicializar automaticamente o banco e as tabelas antes de subir os processos:
+
+```bash
+crud-start --bootstrap-db --reload
+```
+
+## Gerenciamento de banco pelo repo
+
+```bash
+crud-db bootstrap
+crud-db status
+```
+
+Comandos:
+- `crud-db create-db`
+- `crud-db create-schema`
+- `crud-db bootstrap`
+- `crud-db reset-schema`
+- `crud-db status`
+
 ## Banco de dados padrão
 
-Se `DATABASE_URL` não estiver definida, o projeto usa SQLite no arquivo `crud_app.db`.
+Use `DATABASE_URL` no `.env` com o valor recomendado `postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app`.
+
+Na prática de desenvolvimento local, defina as variáveis no arquivo `.env` (veja `.env.example`).

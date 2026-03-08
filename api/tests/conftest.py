@@ -14,13 +14,12 @@ if str(API_DIR) not in sys.path:
     sys.path.insert(0, str(API_DIR))
 
 from app.db.session import Base, get_db
+from app.core.settings import get_env
 
 
 @pytest.fixture()
 def client() -> Generator[TestClient, None, None]:
-    test_database_url = os.getenv(
-        "TEST_DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app"
-    )
+    test_database_url = get_env("TEST_DATABASE_URL", required=True)
     os.environ["DATABASE_URL"] = test_database_url
 
     try:

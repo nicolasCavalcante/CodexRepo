@@ -31,13 +31,44 @@ Dependências de desenvolvimento (testes da API):
 pip install -e .[dev]
 ```
 
+## Arquivo de ambiente (`.env`)
+
+As variáveis de ambiente padrão do projeto estão no arquivo `.env`.
+Para compartilhar o template no repositório, use `.env.example`.
+
+Se precisar recriar o arquivo local:
+
+```powershell
+Copy-Item .env.example .env
+```
+
 ## Como rodar localmente no Windows
 
-### 1) Subir PostgreSQL
+### 1) Preparar banco PostgreSQL via CLI do projeto
 
-A API usa PostgreSQL por padrão. Inicie seu PostgreSQL local com as credenciais abaixo (ou ajuste `DATABASE_URL`):
+A API usa PostgreSQL por padrão:
 
 - `postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app`
+
+Com o ambiente virtual ativo, você pode criar e gerenciar o banco sem sair do repo:
+
+```powershell
+crud-db bootstrap
+crud-db status
+```
+
+Comandos disponíveis:
+- `crud-db create-db`: cria o database se ele não existir.
+- `crud-db create-schema`: cria apenas as tabelas.
+- `crud-db bootstrap`: cria database (quando necessário) e tabelas.
+- `crud-db reset-schema`: recria todas as tabelas.
+- `crud-db status`: testa conexão e lista tabelas.
+
+Para usar outra conexão:
+
+```powershell
+crud-db --database-url "postgresql+psycopg://postgres:postgres@127.0.0.1:5432/meu_novo_banco" bootstrap
+```
 
 ### 2) Subir API FastAPI
 
@@ -85,6 +116,12 @@ A aplicação está configurada para usar PostgreSQL por padrão:
 
 Se quiser usar outro banco PostgreSQL, defina a variável de ambiente `DATABASE_URL` antes de iniciar a API.
 Para testes automatizados da API, você também pode definir `TEST_DATABASE_URL`.
+
+Para subir API e Streamlit já com bootstrap do banco:
+
+```powershell
+crud-start --bootstrap-db --reload
+```
 
 ## Analytics (dbt + DuckDB)
 

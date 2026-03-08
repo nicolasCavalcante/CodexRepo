@@ -1,12 +1,12 @@
 from collections.abc import Generator
-import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql+psycopg://postgres:postgres@127.0.0.1:5432/crud_app"
-)
+from app.core.settings import get_env
+
+
+DATABASE_URL = get_env("DATABASE_URL", required=True)
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
