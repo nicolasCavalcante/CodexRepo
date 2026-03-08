@@ -24,13 +24,15 @@ onMounted(fetchTodos)
 
 // Add a new todo (POST to API)
 const addTodo = async () => {
-  if (newTodo.value.trim()) {
+  const title = newTodo.value.trim()
+  if (title) {
     try {
       const res = await fetch(apiBase, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: newTodo.value.trim(), completed: false }),
+        body: JSON.stringify({ title, done: false }),
       })
+      if (!res.ok) throw new Error('Failed to create todo')
       const todo = await res.json()
       todos.value.push(todo)
       newTodo.value = ''
@@ -48,8 +50,9 @@ const toggleTodo = async (id) => {
       const res = await fetch(`${apiBase}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: !todo.completed }),
+        body: JSON.stringify({ done: !todo.done }),
       })
+      if (!res.ok) throw new Error('Failed to update todo')
       Object.assign(todo, await res.json())
     } catch (err) {
       console.error(err)
@@ -60,7 +63,8 @@ const toggleTodo = async (id) => {
 // Remove a todo (DELETE)
 const removeTodo = async (id) => {
   try {
-    await fetch(`${apiBase}/${id}`, { method: 'DELETE' })
+    const res = await fetch(`${apiBase}/${id}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Failed to delete todo')
     todos.value = todos.value.filter((t) => t.id !== id)
   } catch (err) {
     console.error(err)
@@ -76,9 +80,9 @@ const removeTodo = async (id) => {
       <button @click="addTodo">Add</button>
     </div>
     <ul>
-      <li v-for="todo in todos" :key="todo.id" :class="{ completed: todo.completed }">
-        <input type="checkbox" :checked="todo.completed" @change="toggleTodo(todo.id)" />
-        <span>{{ todo.text }}</span>
+      <li v-for="todo in todos" :key="todo.id" :class="{ completed: todo.done }">
+        <input type="checkbox" :checked="todo.done" @change="toggleTodo(todo.id)" />
+        <span>{{ todo.title }}</span>
         <button @click="removeTodo(todo.id)">Remove</button>
       </li>
     </ul>
